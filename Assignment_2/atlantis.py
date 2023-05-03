@@ -2,32 +2,38 @@ import gym
 import cv2
 import random as rand
 
-# env = gym.make("ALE/Atlantis-v5", render_mode="human")
-env = gym.make("ALE/Breakout-v5", render_mode="human")
+from stable_baselines3 import A2C
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
+from stable_baselines3.common.utils import set_random_seed
 
-env.action_space.seed(42)
 
-observation, info = env.reset(seed=42)
-prev_action = None
-for idx in range(100):
-    #Action 0: No action
-    #Action 1: Fire button
-    #Action 2: Fire left
-    #Action 3: Fire right
-    # if info["episode_frame_number"] < 200:
-    if prev_action != 0: 
-        random_action = 0
-    else:
-        random_action = rand.randint(1,3)
-    prev_action = random_action
-    # random_action = 1
-    # random_action = rand.randint(1,2)
-    # random_action = 2
-    print(random_action)
-    observation, reward, terminated, truncated, info = env.step(int(random_action))
-    print("Info: {}, Reward: {}, Terminated: {}, Truncated: {}".format(info, reward, terminated, truncated))
+env_id = "ALE/Breakout-v5"
+seed = 42
+# env.reset(seed=seed)
 
-    if terminated or truncated:
-        observation, info = env.reset()
+env = make_vec_env(env_id, n_envs=1, seed=seed)
+# env = gym.make(env_id, render_mode="human")
+# env.reset(seed=seed)
 
-env.close()
+##Load and train the model
+model = A2C("CnnPolicy", env, verbose=1)
+model.learn(total_timesteps=1000, progress_bar=True)
+model.save("a2c_cartpole")
+
+# del model
+
+# model = A2C.load("a2c_cartpole")
+
+###Get the evaluations
+# mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
+###Run the model
+
+obs = env.reset()
+for idx in range(1000):
+   action, _states = model.predict(obs)
+   obs, rewards, dones, info = env.step(action)
+   env.render()
+   if dones:
+        obs = env.reset()
