@@ -20,11 +20,11 @@ env = make_vec_env(env_id, n_envs=1, seed=seed)
 ##Load and train the model
 model = A2C("CnnPolicy", env, verbose=1)
 model.learn(total_timesteps=1000, progress_bar=True)
-model.save("a2c_cartpole")
+model.save("/home/anne-jan/Documents/drl_dataset/a2c_cartpole")
 
 # del model
 
-# model = A2C.load("a2c_cartpole")
+# model = A2C.load("/home/anne-jan/Documents/drl_dataset/a2c_cartpole")
 
 ###Get the evaluations
 # mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
