@@ -5,7 +5,7 @@ import random as rand
 from stable_baselines3 import A2C
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.evaluation import evaluate_policy
-from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
+from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecFrameStack
 from stable_baselines3.common.utils import set_random_seed
 
 
@@ -14,6 +14,7 @@ seed = 42
 # env.reset(seed=seed)
 
 env = make_vec_env(env_id, n_envs=1, seed=seed)
+env = VecFrameStack(env, n_stack=4)
 # env = gym.make(env_id, render_mode="human")
 # env.reset(seed=seed)
 
