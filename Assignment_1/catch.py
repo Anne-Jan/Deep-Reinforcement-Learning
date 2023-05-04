@@ -65,6 +65,11 @@ class CatchEnv():
 
     def state_shape(self):
         return (self.fps,) + self.output_shape
+    
+    def reduce_dimensionality(self, state):
+        grayscaled_state = cv2.cvtColor(np.float32(state), cv2.COLOR_BGR2GRAY)
+        print("Grayscale state shape: {}".format(grayscaled_state.shape))
+        return grayscaled_state
 
 
 def run_environment():
@@ -80,10 +85,20 @@ def run_environment():
             state, reward, terminal = env.step(random.randint(0,2))
             print("Reward obtained by the agent: {}".format(reward))
             state = np.squeeze(state)
-            resized_state = resize(state, (254, 254))
+
+            #Reduce the dimensions of the state for the neural network
+            state = env.reduce_dimensionality(state)
+
+            #TODO feed the state to the neural network
+
+            #Resize the state to show it in a window
             
+            resized_state = resize(state, (254, 254))            
             cv2.imshow("image", resized_state)
+            print("State shape: {}".format(resized_state.shape))
             cv2.waitKey(0)
+
+            
 
         print("End of the episode")
             

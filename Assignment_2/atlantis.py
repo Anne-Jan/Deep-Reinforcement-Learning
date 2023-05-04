@@ -1,26 +1,40 @@
-import gymnasium as gym
+import gym
+import cv2
+import random as rand
 
-env = gym.make("ALE/Atlantis-v5", render_mode = "human")
-observation, info = env.reset(seed=42)
+from stable_baselines3 import A2C
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecFrameStack
+from stable_baselines3.common.utils import set_random_seed
 
-action = 0
-prevaction = 0
-skipaction = False
 
-for _ in range(1000):
-    if prevaction == 0 and not skipaction:
-        action = 1 if action == 3 else action + 1
-        # observation, reward, terminated, truncated, info = env.step(int(action))
-        prevaction = action
-    else:
-        # observation, reward, terminated, truncated, info = env.step(int(0))
-        prevaction = 0
+env_id = "ALE/Breakout-v5"
+seed = 42
+# env.reset(seed=seed)
 
-    print(prevaction)
+env = make_vec_env(env_id, n_envs=1, seed=seed)
+env = VecFrameStack(env, n_stack=4)
+# env = gym.make(env_id, render_mode="human")
+# env.reset(seed=seed)
 
-    observation, reward, terminated, truncated, info = env.step(int(prevaction))
+##Load and train the model
+model = A2C("CnnPolicy", env, verbose=1)
+model.learn(total_timesteps=1000, progress_bar=True)
+model.save("/home/anne-jan/Documents/drl_dataset/a2c_cartpole")
 
-    if terminated or truncated:
-        observation, info = env.reset(seed=42)
+# del model
 
-env.close()
+# model = A2C.load("/home/anne-jan/Documents/drl_dataset/a2c_cartpole")
+
+###Get the evaluations
+# mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
+###Run the model
+
+obs = env.reset()
+for idx in range(1000):
+   action, _states = model.predict(obs)
+   obs, rewards, dones, info = env.step(action)
+   env.render()
+   if dones:
+        obs = env.reset()
