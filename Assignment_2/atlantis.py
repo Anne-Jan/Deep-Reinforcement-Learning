@@ -21,7 +21,7 @@ env = VecFrameStack(env, n_stack=4)
 ##Load and train the model
 model = A2C("CnnPolicy", env, verbose=1)
 model.learn(total_timesteps=1000, progress_bar=True)
-model.save("/home/anne-jan/Documents/drl_dataset/a2c_cartpole")
+# model.save("/home/anne-jan/Documents/drl_dataset/a2c_cartpole")
 
 # del model
 

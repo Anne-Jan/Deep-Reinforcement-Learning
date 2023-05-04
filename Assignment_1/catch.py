@@ -3,6 +3,9 @@ import random
 import numpy as np
 import cv2
 
+import DQN
+import ExperienceReplayBuffer
+
 class CatchEnv():
     def __init__(self):
         self.size = 21
@@ -72,36 +75,63 @@ class CatchEnv():
         return grayscaled_state
 
 
-def run_environment():
+
+# -------------------------------------------------------------
+
+def train_model(number_of_episodes, update_freq):
+    # Initialize environment, RL-agent and memory buffer
     env = CatchEnv()
-    number_of_episodes = 1
+    agent = DeepQLearning()
+    buffer = ReplayBuffer()
 
+    # Let agent interact with environment, saving trajectories and learning
     for ep in range(number_of_episodes):
-        env.reset()
-        
-        state, reward, terminal = env.step(1) 
-
-        while not terminal:
-            state, reward, terminal = env.step(random.randint(0,2))
-            print("Reward obtained by the agent: {}".format(reward))
-            state = np.squeeze(state)
-
-            #Reduce the dimensions of the state for the neural network
-            state = env.reduce_dimensionality(state)
-
-            #TODO feed the state to the neural network
-
-            #Resize the state to show it in a window
-            
-            resized_state = resize(state, (254, 254))            
-            cv2.imshow("image", resized_state)
-            print("State shape: {}".format(resized_state.shape))
-            cv2.waitKey(0)
-
-            
-
+        run_environment(env, agent, buffer)
+        batch = buffer.get_train_batch()
+        loss = agent.train(batch)
+        if ep % update_freq == 0:
+            agent.update_target()
         print("End of the episode")
+
+
+def run_environment(env, agent, buffer):
+    env.reset()
+    state0, reward, terminal = env.step(1)
+
+    while not terminal:
+        action = agent.policy(state)
+        state1, reward, terminal = env.step(action)
+        buffer.save_trajectory(state0, action, reward, state1, terminal)
+
+        state0 = state1
+
+        # state, reward, terminal = env.step(random.randint(0,2))
+        # print("Reward obtained by the agent: {}".format(reward))
+        # state = np.squeeze(state)
+
+        # #Reduce the dimensions of the state for the neural network
+        # state = env.reduce_dimensionality(state)
+
+        # #TODO feed the state to the neural network
+
+        # #Resize the state to show it in a window
+        
+        # resized_state = resize(state, (254, 254))            
+        # cv2.imshow("image", resized_state)
+        # print("State shape: {}".format(resized_state.shape))
+        # cv2.waitKey(0)
+
+            
+
+
             
 
 if __name__ == "__main__":
-    run_environment()
+    # train_model(100, 20)
+    env = CatchEnv()
+    env.reset()
+    state, reward, terminal = env.step(1)
+    state = np.squeeze(state)
+    state = env.reduce_dimensionality(state)
+
+    print(state.shape)
