@@ -88,6 +88,8 @@ def train_model(number_of_episodes, update_freq):
     for ep in range(number_of_episodes):
         run_environment(env, agent, buffer)
         batch = buffer.get_train_batch()
+        if batch == None:
+            continue
         loss = agent.train(batch)
         if ep % update_freq == 0:
             agent.update_target()
@@ -95,8 +97,11 @@ def train_model(number_of_episodes, update_freq):
 
 
 def run_environment(env, agent, buffer):
-    env.reset()
-    state0, reward, terminal = env.step(1)
+    state = env.reset()
+    # cv2.imshow("image", state)
+    # cv2.waitKey(0)
+
+    # state0, reward, terminal = env.step(1)
 
     while not terminal:
         action = agent.policy(state)
