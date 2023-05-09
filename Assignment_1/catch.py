@@ -3,8 +3,8 @@ import random
 import numpy as np
 import cv2
 
-import DQN
-import ExperienceReplayBuffer
+from DQN import DeepQLearning
+from ExperienceReplayBuffer import ExperienceReplayBuffer
 
 class CatchEnv():
     def __init__(self):
@@ -82,7 +82,7 @@ def train_model(number_of_episodes, update_freq):
     # Initialize environment, RL-agent and memory buffer
     env = CatchEnv()
     agent = DeepQLearning()
-    buffer = ReplayBuffer()
+    buffer = ExperienceReplayBuffer()
 
     # Let agent interact with environment, saving trajectories and learning
     for ep in range(number_of_episodes):
@@ -132,11 +132,6 @@ def run_environment(env, agent, buffer):
             
 
 if __name__ == "__main__":
-    # train_model(100, 20)
-    env = CatchEnv()
-    env.reset()
-    state, reward, terminal = env.step(1)
-    state = np.squeeze(state)
-    state = env.reduce_dimensionality(state)
+    
+    train_model(100, 20)
 
-    print(state.shape)

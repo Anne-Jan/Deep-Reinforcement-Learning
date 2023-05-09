@@ -8,7 +8,6 @@ from tensorflow.keras import datasets, layers, models
 # from collections import deque 
 # from tensorflow import gather_nd
 # from tensorflow.keras.losses import mean_squared_error 
-import catch
 
 
 def create_model():
