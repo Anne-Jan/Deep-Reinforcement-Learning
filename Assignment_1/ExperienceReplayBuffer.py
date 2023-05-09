@@ -1,25 +1,29 @@
 import random
+import numpy as np
+from collections import deque
 
-class ExperienceReplayBuffer(object):
-
-    def __innit__(self):
+class ExperienceReplayBuffer():
+    def __init__(self):
         self.max_capacity = 1000000
         self.batch_size = 128
-        self.memories = np.array([])
+        # self.memories = np.array([])
+        self.memories = deque(maxlen = self.max_capacity)
 
     # Saves a trajectory to the buffer
     def save_trajectory(self, state0, action, reward, state1, terminal):
-        if len(self.memories) == self.max_capacity:
-            self.memories[:-1] = self.memories[1:]
-            self.memories[-1] = (state0, action, reward, state1, terminal)
-        else:
-            self.memories = np.append(self.memories, (state0, action, reward, state1, terminal))
+        # if len(self.memories) == self.max_capacity:
+        #     self.memories[:-1] = self.memories[1:]
+        #     self.memories[-1] = (state0, action, reward, state1, terminal)
+        # else:
+        #     self.memories = np.append(self.memories, (state0, action, reward, state1, terminal))
+        self.memories.append((state0, action, reward, state1, terminal))
     
     # Returns a batch for training from the buffer
     def get_train_batch(self):
         if len(self.memories) < self.batch_size:
             return None
         batch = random.sample(self.memories, self.batch_size)
+
         
         state0_batch = []
         action_batch = []

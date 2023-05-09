@@ -14,7 +14,7 @@ from tensorflow.keras import datasets, layers, models
 def create_model():
 
     dqn_model = models.Sequential()
-    dqn_model.add(layers.Conv2D(32, (3, 3), activation = 'relu', input_shape = (84, 84)))
+    dqn_model.add(layers.Conv2D(32, (3, 3), activation = 'relu', input_shape = (84, 84, 1)))
     dqn_model.add(layers.MaxPooling2D((2, 2)))
     dqn_model.add(layers.Conv2D(64, (3, 3), activation='relu'))
     dqn_model.add(layers.MaxPooling2D((2, 2)))
@@ -28,20 +28,25 @@ def create_model():
     return dqn_model
 
 class DeepQLearning:
-
-    def __innit__(self):
+    def __init__(self):
         self.dqn_model = create_model()
         self.target_dqn_model = create_model()
 
     # The policy takes a state and returns an action
     def policy(self, state):
-        model_output = self.dqn_model.predict(state)
-        # TODO: check of dit juiste format output heeft zo
-        action = np.argmax(model_output)
-        return action
+        if False:
+            model_output = self.dqn_model.predict(state)
+            # TODO: check of dit juiste format output heeft zo
+            action = np.argmax(model_output)
+            return action
+        else:
+            return 0
 
     def train(self, batch):
         state0_batch, action_batch, reward_batch, state1_batch, terminal_batch = batch
+        print("here")
+        print(state0_batch.shape)
+        print(state0_batch[0].shape)
         current_q = self.dqn_model(state0_batch)
         target_q = np.copy(current_q)
         next_q = self.dqn_model(state1_batch)

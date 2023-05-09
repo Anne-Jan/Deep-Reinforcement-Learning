@@ -3,13 +3,8 @@ import random
 import numpy as np
 import cv2
 
-<<<<<<< HEAD
-import DQN
-import ExperienceReplayBuffer
-=======
-from DQN import DeepQLearning
-from ExperienceReplayBuffer import ExperienceReplayBuffer
->>>>>>> 1ed67cac50506978ec7ca726c165d5c92733bc49
+from DQN import *
+from ExperienceReplayBuffer import *
 
 class CatchEnv():
     def __init__(self):
@@ -87,11 +82,7 @@ def train_model(number_of_episodes, update_freq):
     # Initialize environment, RL-agent and memory buffer
     env = CatchEnv()
     agent = DeepQLearning()
-<<<<<<< HEAD
-    buffer = ReplayBuffer()
-=======
     buffer = ExperienceReplayBuffer()
->>>>>>> 1ed67cac50506978ec7ca726c165d5c92733bc49
 
     # Let agent interact with environment, saving trajectories and learning
     for ep in range(number_of_episodes):
@@ -110,7 +101,7 @@ def run_environment(env, agent, buffer):
     # cv2.imshow("image", state)
     # cv2.waitKey(0)
 
-    # state0, reward, terminal = env.step(1)
+    state0, reward, terminal = env.step(1)
 
     while not terminal:
         action = agent.policy(state)
@@ -141,17 +132,11 @@ def run_environment(env, agent, buffer):
             
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    # train_model(100, 20)
-    env = CatchEnv()
-    env.reset()
-    state, reward, terminal = env.step(1)
-    state = np.squeeze(state)
-    state = env.reduce_dimensionality(state)
-
-    print(state.shape)
-=======
+    train_model(100, 2)
     
-    train_model(100, 20)
+    # env = CatchEnv()
+    # env.reset()
+    # state, reward, terminal = env.step(1)
+    # state = np.squeeze(state)
+    # state = env.reduce_dimensionality(state)
 
->>>>>>> 1ed67cac50506978ec7ca726c165d5c92733bc49
