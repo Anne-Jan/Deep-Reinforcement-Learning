@@ -21,15 +21,9 @@ env = VecFrameStack(env, n_stack=4)\
 # env = gym.make(env_id, render_mode="human")
 # env.reset(seed=seed)
 
-<<<<<<< HEAD
-##Load and train the model
-model = A2C("CnnPolicy", env, verbose=1)
-model.learn(total_timesteps=1000, progress_bar=True)
-=======
 # ##Load and train the model
 # model = A2C("CnnPolicy", env, verbose=1)
 # model.learn(total_timesteps=1000, progress_bar=True)
->>>>>>> 1ed67cac50506978ec7ca726c165d5c92733bc49
 # model.save("/home/anne-jan/Documents/drl_dataset/a2c_cartpole")
 
 # del model

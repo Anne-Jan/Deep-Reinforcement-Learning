@@ -23,7 +23,7 @@ def create_model():
     dqn_model.add(layers.Dense(64, activation='relu'))
     dqn_model.add(layers.Dense(3))
 
-    dqn_model.compile(optimizer=tf.optimizers.Adam(learning_rate=0.001), loss='mse')
+    dqn_model.compile(optimizer=tf.optimizers.AdamW(learning_rate=0.001), loss='mse')
 
     return dqn_model
 
@@ -34,30 +34,31 @@ class DeepQLearning:
 
     # The policy takes a state and returns an action
     def policy(self, state):
-        if False:
-            model_output = self.dqn_model.predict(state)
-            # TODO: check of dit juiste format output heeft zo
-            action = np.argmax(model_output)
-            return action
-        else:
-            return 0
+        # Add small chance to explore
+        if random.random() < 0.1:
+            return random.randint(0, 2)
+        state = state.reshape(1, 84, 84, 1)
+        model_output = self.dqn_model.predict(state)
+        # TODO: check of dit juiste format output heeft zo
+        action = np.argmax(model_output)
+        return action
 
     def train(self, batch):
         state0_batch, action_batch, reward_batch, state1_batch, terminal_batch = batch
-        print("here")
-        print(state0_batch.shape)
-        print(state0_batch[0].shape)
         current_q = self.dqn_model(state0_batch)
         target_q = np.copy(current_q)
         next_q = self.dqn_model(state1_batch)
         best_next_q = np.amax(next_q, axis=1)
         for idx in range(state0_batch.shape[0]): # testen of length ook werkt
-            if terminal_batch[i]:
-                target_q[i][action_batch[i]] = reward_batch[i]
+            if terminal_batch[idx]:
+                target_q[idx][action_batch[idx]] = reward_batch[idx]
             else:
-                target_q[i][action_batch[i]] = reward_batch[i] + 0.95 * best_next_q[i]
+                target_q[idx][action_batch[idx]] = reward_batch[idx] + 0.95 * best_next_q[idx]
 
         result = self.dqn_model.fit(x=state0_batch, y=target_q)
 
         return result.history['loss']
+    
+    def update_target(self):
+        self.target_dqn_model.set_weights(self.dqn_model.get_weights())
         

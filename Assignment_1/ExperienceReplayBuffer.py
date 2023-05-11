@@ -4,7 +4,7 @@ from collections import deque
 
 class ExperienceReplayBuffer():
     def __init__(self):
-        self.max_capacity = 1000000
+        self.max_capacity = 100000
         self.batch_size = 128
         # self.memories = np.array([])
         self.memories = deque(maxlen = self.max_capacity)

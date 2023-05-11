@@ -2,6 +2,7 @@ from skimage.transform import resize
 import random
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 from DQN import *
 from ExperienceReplayBuffer import *
@@ -71,7 +72,6 @@ class CatchEnv():
     
     def reduce_dimensionality(self, state):
         grayscaled_state = cv2.cvtColor(np.float32(state), cv2.COLOR_BGR2GRAY)
-        print("Grayscale state shape: {}".format(grayscaled_state.shape))
         return grayscaled_state
 
 
@@ -83,32 +83,43 @@ def train_model(number_of_episodes, update_freq):
     env = CatchEnv()
     agent = DeepQLearning()
     buffer = ExperienceReplayBuffer()
+    results = []
+    reward_sum = 0
 
     # Let agent interact with environment, saving trajectories and learning
-    for ep in range(number_of_episodes):
-        run_environment(env, agent, buffer)
+    for ep in range(number_of_episodes + 1):
+        reward_sum += run_environment(env, agent, buffer)
+        print(reward_sum)
         batch = buffer.get_train_batch()
         if batch == None:
             continue
         loss = agent.train(batch)
         if ep % update_freq == 0:
             agent.update_target()
-        print("End of the episode")
+        if ep % (number_of_episodes / 500) == 0:
+            print("Episode: {}, reward: {}, loss: {}".format(ep, reward_sum, loss))
+            results.append(reward_sum)
+            reward_sum = 0
+    return results
+
 
 
 def run_environment(env, agent, buffer):
-    state = env.reset()
+    state0 = env.reset()
     # cv2.imshow("image", state)
     # cv2.waitKey(0)
 
     state0, reward, terminal = env.step(1)
+    state0 = env.reduce_dimensionality(state0)
 
     while not terminal:
-        action = agent.policy(state)
+        action = agent.policy(state0)
         state1, reward, terminal = env.step(action)
+        state1 = env.reduce_dimensionality(state1)
         buffer.save_trajectory(state0, action, reward, state1, terminal)
 
         state0 = state1
+    return reward
 
         # state, reward, terminal = env.step(random.randint(0,2))
         # print("Reward obtained by the agent: {}".format(reward))
@@ -132,7 +143,15 @@ def run_environment(env, agent, buffer):
             
 
 if __name__ == "__main__":
-    train_model(100, 2)
+    results = train_model(10000, 50)
+    print(results)
+    # plot the results with running average
+    # results = np.array(results)
+    # results = np.convolve(results, np.ones(100)/100, mode='valid')
+
+    plt.plot(results)
+    plt.show()
+
     
     # env = CatchEnv()
     # env.reset()
