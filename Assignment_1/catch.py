@@ -115,6 +115,7 @@ def train_model(number_of_episodes, update_freq):
             if batch == None:
                 print("Not enough trajectories in buffer")
                 continue
+            print("TRAINING")
             agent.train(batch)
         #Update target network every N training episodes where N is update_freq
         if total_num_of_training_episodes != 0 and not validation and total_num_of_training_episodes % update_freq == 0:
@@ -182,7 +183,7 @@ def run_environment(env, agent, buffer, validation):
             
 
 if __name__ == "__main__":
-    results, rewards = train_model(1000, 25)
+    results, rewards = train_model(4500, 50)
     np.save("results.npy", results)
     results = np.load("results.npy")
     print(results)

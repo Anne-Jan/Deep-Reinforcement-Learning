@@ -23,7 +23,7 @@ def create_model():
     dqn_model.add(layers.Dense(64, activation='relu'))
     dqn_model.add(layers.Dense(3))
 
-    dqn_model.compile(optimizer=tf.optimizers.AdamW(learning_rate=0.01), loss='mse')
+    dqn_model.compile(optimizer=tf.optimizers.AdamW(learning_rate=0.001), loss='mse')
 
     return dqn_model
 
