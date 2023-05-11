@@ -112,25 +112,19 @@ def train_model(number_of_episodes, update_freq):
         #Only train if not validating and batch size is reached
         if not validation and ep > buffer.batch_size:
             batch = buffer.get_train_batch()
-            if batch == None:
-                print("Not enough trajectories in buffer")
-                continue
-            print("TRAINING")
             agent.train(batch)
+
         #Update target network every N training episodes where N is update_freq
         if total_num_of_training_episodes != 0 and not validation and total_num_of_training_episodes % update_freq == 0:
             print("UPDATING TARGET NETWORK")
             agent.update_target()
-        # if ep % (number_of_episodes / 10) == 0:
-        #     print("Episode: {}, reward: {}, loss: {}".format(ep, reward_sum, loss))
-        #     results.append(reward_sum)
-        #     reward_sum = 0
 
         #Only store rewards if validating
         if validation:
             reward_sum += run_environment(env, agent, buffer, validation)
-            print(reward_sum)    
+            print(reward_sum)
             num_of_validation_episodes += 1
+
         #Only increase training eps if not validating and batch size is reached
         elif not validation and ep > buffer.batch_size:
             run_environment(env, agent, buffer, validation)
@@ -138,7 +132,10 @@ def train_model(number_of_episodes, update_freq):
             total_num_of_training_episodes += 1
         else:
             run_environment(env, agent, buffer, validation)
+
     return results, rewards
+
+
 
 
 
@@ -154,30 +151,14 @@ def run_environment(env, agent, buffer, validation):
         action = agent.policy(state0, validation)
         state1, reward, terminal = env.step(action)
         state1 = env.reduce_dimensionality(state1)
+
         #Only save the trajectory if not validating
         if not validation:
             buffer.save_trajectory(state0, action, reward, state1, terminal)
 
         state0 = state1
     return reward
-
-        # state, reward, terminal = env.step(random.randint(0,2))
-        # print("Reward obtained by the agent: {}".format(reward))
-        # state = np.squeeze(state)
-
-        # #Reduce the dimensions of the state for the neural network
-        # state = env.reduce_dimensionality(state)
-
-        # #TODO feed the state to the neural network
-
-        # #Resize the state to show it in a window
         
-        # resized_state = resize(state, (254, 254))            
-        # cv2.imshow("image", resized_state)
-        # print("State shape: {}".format(resized_state.shape))
-        # cv2.waitKey(0)
-
-            
 
 
             
@@ -187,17 +168,9 @@ if __name__ == "__main__":
     np.save("results.npy", results)
     results = np.load("results.npy")
     print(results)
-    # plot the results with running average
-    # results = np.array(results)
-    # results = np.convolve(results, np.ones(100)/100, mode='valid')
 
     plt.plot(rewards)
     plt.show()
 
     
-    # env = CatchEnv()
-    # env.reset()
-    # state, reward, terminal = env.step(1)
-    # state = np.squeeze(state)
-    # state = env.reduce_dimensionality(state)
 
