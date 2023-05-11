@@ -23,7 +23,7 @@ def create_model():
     dqn_model.add(layers.Dense(64, activation='relu'))
     dqn_model.add(layers.Dense(3))
 
-    dqn_model.compile(optimizer=tf.optimizers.AdamW(learning_rate=0.001), loss='mse')
+    dqn_model.compile(optimizer=tf.optimizers.AdamW(learning_rate=0.01), loss='mse')
 
     return dqn_model
 
@@ -33,9 +33,9 @@ class DeepQLearning:
         self.target_dqn_model = create_model()
 
     # The policy takes a state and returns an action
-    def policy(self, state):
-        # Add small chance to explore
-        if random.random() < 0.1:
+    def policy(self, state, validation):
+        # Add small chance to explore but not when validating performance
+        if not validation and random.random() < 0.1:
             return random.randint(0, 2)
         state = state.reshape(1, 84, 84, 1)
         model_output = self.dqn_model.predict(state)
