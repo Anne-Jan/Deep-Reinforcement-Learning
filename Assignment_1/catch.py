@@ -91,7 +91,7 @@ def train_model(number_of_episodes, update_freq):
     total_num_of_training_episodes = 0
     validation = False
     # Let agent interact with environment, saving trajectories and learning
-    for ep in range(number_of_episodes + 1):
+    for ep in range(number_of_episodes + buffer.batch_size + 1):
         print("Episode: {}".format(ep))
         print("Training episodes: {}".format(total_num_of_training_episodes))
 
@@ -103,7 +103,7 @@ def train_model(number_of_episodes, update_freq):
         elif num_of_validation_episodes == 10:
             validation = False
             num_of_validation_episodes = 0
-            result = "average_reward_between_testing_episodes_{}_and_{}: {} \n".format(num_of_training_episodes - 10, num_of_training_episodes, reward_sum / 10)
+            result = "average_reward_between_testing_episodes_{}_and_{}: {}".format(total_num_of_training_episodes - 10, total_num_of_training_episodes, reward_sum / 10)
             results.append(result)
             print(result)
             rewards.append(reward_sum / 10)
@@ -182,7 +182,7 @@ def run_environment(env, agent, buffer, validation):
             
 
 if __name__ == "__main__":
-    results, rewards = train_model(4500, 50)
+    results, rewards = train_model(1000, 25)
     np.save("results.npy", results)
     results = np.load("results.npy")
     print(results)
