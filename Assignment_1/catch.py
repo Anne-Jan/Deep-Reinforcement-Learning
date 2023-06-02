@@ -164,13 +164,13 @@ def run_environment(env, agent, buffer, validation):
             
 
 if __name__ == "__main__":
-    results, rewards = train_model(4500, 50)
-    np.save("results.npy", results)
-    results = np.load("results.npy")
+    # results, rewards = train_model(4500, 50)
+    # np.save("results.npy", results)
+    results = np.load("results1.npy")
     print(results)
 
-    plt.plot(rewards)
-    plt.show()
+    # plt.plot(rewards)
+    # plt.show()
 
     
 
