@@ -141,7 +141,7 @@ def train_model(number_of_episodes, update_freq):
 
 def run_environment(env, agent, buffer, validation):
     state0 = env.reset()
-    # cv2.imshow("image", state)
+    # cv2.imshow("image", state0)
     # cv2.waitKey(0)
 
     state0, reward, terminal = env.step(1)
@@ -151,6 +151,9 @@ def run_environment(env, agent, buffer, validation):
         action = agent.policy(state0, validation)
         state1, reward, terminal = env.step(action)
         state1 = env.reduce_dimensionality(state1)
+
+        # cv2.imshow("image", state1)
+        # cv2.waitKey(0)
 
         #Only save the trajectory if not validating
         if not validation:
@@ -164,13 +167,8 @@ def run_environment(env, agent, buffer, validation):
             
 
 if __name__ == "__main__":
-    # results, rewards = train_model(4500, 50)
-    # np.save("results.npy", results)
-    results = np.load("results1.npy")
-    print(results)
-
-    # plt.plot(rewards)
-    # plt.show()
+    results, rewards = train_model(10000, 50)
+    np.save("results.npy", results)
 
     
 

@@ -47,9 +47,9 @@ class DeepQLearning:
         state0_batch, action_batch, reward_batch, state1_batch, terminal_batch = batch
         current_q = self.dqn_model(state0_batch)
         target_q = np.copy(current_q)
-        next_q = self.dqn_model(state1_batch)
+        next_q = self.target_dqn_model(state1_batch)
         best_next_q = np.amax(next_q, axis=1)
-        for idx in range(state0_batch.shape[0]): # testen of length ook werkt
+        for idx in range(state0_batch.shape[0]):
             if terminal_batch[idx]:
                 target_q[idx][action_batch[idx]] = reward_batch[idx]
             else:

@@ -12,7 +12,10 @@ results = []
 
 
 for line in results_text:
-    results.append(line[-3:])
+    print(line)
+    results.append(float(line[-3:]))
+print(len(results))
+print(max(results))
 
 # Plotting results
 # fig = plt.figure(figsize=(10, 10))
@@ -22,9 +25,10 @@ for line in results_text:
 # ax3 = plt.subplot(gs[2])
 # ax4 = plt.subplot(gs[3])
 plt.plot(results)
-plt.xlabel('Epochs')
+plt.xlabel('Episodes')
 plt.ylabel('Reward')
-plt.title('Reward per epoch')
+plt.yticks(np.arange(0, 1.1, 0.1))
+plt.title('Average Reward of 10 Testing Runs After 10 Training Episodes')
 plt.show()
 
 
@@ -35,7 +39,7 @@ results_text1 = np.load('results/1.npy')
 results_text2 = np.load('results/2.npy')
 results_text3 = np.load('results/3.npy')
 results_text4 = np.load('results/4.npy')
-results_text5 = np.load('results/5.npy')
+results_text5 = np.load('results/7.npy')
 
 results1 = []
 results2 = []
@@ -52,9 +56,9 @@ for line in results_text4:
     results4.append(float(line[-3:]))
 for line in results_text5:
     results5.append(float(line[-3:]))
-avg_rewards.append(np.mean(results1))
-avg_rewards.append(np.mean(results2))
-avg_rewards.append(np.mean(results3))
-avg_rewards.append(np.mean(results4))
-avg_rewards.append(np.mean(results5))
+avg_rewards.append(np.mean(results1[-100:]))
+avg_rewards.append(np.mean(results2[-100:]))
+avg_rewards.append(np.mean(results3[-100:]))
+avg_rewards.append(np.mean(results4[-100:]))
+avg_rewards.append(np.mean(results5[-50:]))
 print(avg_rewards)
